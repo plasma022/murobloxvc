@@ -1,0 +1,115 @@
+Fases del Proyecto: Resumen y Hoja de Ruta
+Este documento resume el progreso de nuestro proyecto, detallando las características implementadas en la Fase 1 y proponiendo una hoja de ruta para las futuras fases de desarrollo.
+
+Fase 1: El Núcleo del Juego (¡Completada!)
+En esta fase, hemos construido la base fundamental de un ARPG funcional. Todos los sistemas esenciales están implementados y conectados entre sí.
+
+Características Completadas:
+
+Sistema de Clases:
+
+Selección de una de las tres clases iniciales (Dark Knight, Dark Wizard, Fairy Elf).
+
+Asignación de estadísticas base únicas para cada clase.
+
+Sistema de Combate:
+
+Ataque básico con clic izquierdo.
+
+Sistema de habilidades completo con clic derecho.
+
+Cooldowns para ataques y habilidades, influenciados por la Velocidad de Ataque.
+
+Consumo de Maná para las habilidades.
+
+Lógica de daño crítico basada en la opción "Suerte" de los ítems.
+
+Comprobación de rango para ataques y habilidades.
+
+Sistema de Progresión:
+
+Los enemigos otorgan Experiencia (EXP) y Zen al ser derrotados.
+
+Sistema de subida de nivel con una curva de experiencia creciente.
+
+Restauración de HP/MP y efecto visual al subir de nivel.
+
+Asignación de puntos de estadísticas (/addstat y UI).
+
+Sistema de Ítems e Inventario:
+
+Base de datos completa con armas y sets para cada clase.
+
+Sistema de loot con drops físicos en el suelo.
+
+Inventario funcional con la capacidad de equipar, desequipar y tirar ítems.
+
+Requisitos de clase y estadísticas para poder equipar ítems.
+
+Panel de detalles (tooltip) que muestra las estadísticas de los ítems.
+
+Interfaz de Usuario (HUD) y Controles:
+
+HUD principal con barras de Vida, Maná y Experiencia, y contador de Zen.
+
+Barra de habilidades que muestra los iconos y la habilidad activa.
+
+Atajos de teclado para el inventario ('B'), estadísticas ('C') y cámara ('X').
+
+Persistencia de Datos:
+
+Guardado y carga de todos los datos del jugador (clase, nivel, stats, inventario, Zen) usando DataStore.
+
+Fase 2: Expansión del Mundo y la Jugabilidad (Próximos Pasos)
+Ahora que la base es sólida, podemos empezar a expandir el mundo y a añadir más profundidad a la jugabilidad.
+
+Posibles Características a Implementar:
+
+NPCs y Tiendas:
+
+Crear NPCs en la ciudad que vendan pociones, armaduras y armas básicas.
+
+Implementar la lógica para comprar y vender ítems usando Zen.
+
+Sistema de Misiones (Quests):
+
+Crear NPCs que ofrezcan misiones simples (ej. "mata 10 arañas").
+
+Sistema para rastrear el progreso de las misiones y dar recompensas (EXP, Zen, ítems).
+
+Más Contenido:
+
+Diseñar y añadir nuevos enemigos con diferentes comportamientos (ej. arqueros, magos).
+
+Crear nuevas zonas en el mapa con enemigos de mayor nivel.
+
+Expandir la base de datos de ítems con objetos más poderosos.
+
+Sistema de Grupos (Party):
+
+Permitir que los jugadores se inviten a un grupo.
+
+Compartir la experiencia y el Zen entre los miembros del grupo que estén cerca.
+
+Fase 3: Características Avanzadas y de "Endgame"
+Esta fase se centraría en añadir sistemas que mantengan a los jugadores enganchados a largo plazo.
+
+Posibles Características a Implementar:
+
+Sistema de Joyas y Opciones Excelentes:
+
+Implementar la mecánica de añadir "Joyas de la Vida" o "Joyas del Alma" a los ítems para mejorar su nivel.
+
+Añadir la posibilidad de que los ítems caigan con "Opciones Excelentes" que les den bonificaciones únicas.
+
+Eventos Especiales:
+
+Crear eventos programados como el "Blood Castle" o el "Devil Square".
+
+JcJ (PvP):
+
+Implementar un sistema para que los jugadores puedan luchar entre sí en zonas designadas.
+
+Sistema de Clanes (Guilds):
+
+Permitir que los jugadores creen y se unan a clanes.
