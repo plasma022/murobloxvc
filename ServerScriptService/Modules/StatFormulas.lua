@@ -6,6 +6,11 @@
 
 local StatFormulas = {}
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UpdateClientStatsEvent = ReplicatedStorage.RemoteEvents:WaitForChild("UpdateClientStats")
+local PlayLevelUpEffectEvent = ReplicatedStorage.RemoteEvents:WaitForChild("PlayLevelUpEffect")
+local AssignStatPointEvent = ReplicatedStorage.RemoteEvents:WaitForChild("AssignStatPoint")
+
 function StatFormulas:AddZen(player, amount)
 	local stats = StatFormulas:GetStats(player)
 	if not stats then return end
@@ -14,10 +19,6 @@ function StatFormulas:AddZen(player, amount)
 	-- Actualiza el HUD usando el evento correcto
 	UpdateClientStatsEvent:FireClient(player, stats)
 end
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local UpdateClientStatsEvent = ReplicatedStorage.RemoteEvents:WaitForChild("UpdateClientStats")
-local PlayLevelUpEffectEvent = ReplicatedStorage.RemoteEvents:WaitForChild("PlayLevelUpEffect")
-local AssignStatPointEvent = ReplicatedStorage.RemoteEvents:WaitForChild("AssignStatPoint")
 
 local playerStats = {}
 local activeBuffs = {}

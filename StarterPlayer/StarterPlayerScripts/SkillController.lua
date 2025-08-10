@@ -101,19 +101,22 @@ end
 -- Bucle de casteo continuo
 -- El casteo y animación ahora se sincronizan con la confirmación del servidor
 local function onSkillConfirmed(skillName)
-local skillInfo = SkillData[skillName]
-if not skillInfo then canAttack = true return end
-if animationHandler then
-	animationHandler:PlayAnimation(skillName)
-end
--- Solo los buffs permiten casteo inmediato
-if skillInfo.SkillType == "Buff" then
-	canAttack = true
-else
-	canAttack = false
-	task.wait(skillInfo.Cooldown or 2)
-	canAttack = true
-end
+	local skillInfo = SkillData[skillName]
+	if not skillInfo then 
+		canAttack = true 
+		return 
+	end
+	if animationHandler then
+		animationHandler:PlayAnimation(skillName)
+	end
+	-- Solo los buffs permiten casteo inmediato
+	if skillInfo.SkillType == "Buff" then
+		canAttack = true
+	else
+		canAttack = false
+		task.wait(skillInfo.Cooldown or 2)
+		canAttack = true
+	end
 end
 
 SkillConfirmEvent.OnClientEvent:Connect(onSkillConfirmed)
@@ -143,27 +146,21 @@ end)
 -- Manejadores de Input
 local function onInputBegan(input, gameProcessed)
 	if gameProcessed then return end
-	
+
 	-- Clic Izquierdo para Ataque Básico
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		local target = mouse.Target
-		if target and target.Parent and target.Parent:IsA("Model") then
-			local model = target.Parent
-			if model:FindFirstChild("Humanoid") or model.PrimaryPart then
-				PlayerAttackEvent:FireServer(model)
-			end
+		if target and target:IsA("Model") and (target:FindFirstChild("Humanoid") or target.PrimaryPart) then
+			PlayerAttackEvent:FireServer(target)
+		elseif target and target.Parent and target.Parent:IsA("Model") and (target.Parent:FindFirstChild("Humanoid") or target.Parent.PrimaryPart) then
+			PlayerAttackEvent:FireServer(target.Parent)
 		end
 	end
-	
 	-- Clic Derecho para Habilidades
 	if input.UserInputType == Enum.UserInputType.MouseButton2 then
 		isRightMouseDown = true
-	end
-	
-	if input.UserInputType == Enum.UserInputType.MouseButton2 then
 		-- Ahora la animación y cooldown se manejan solo con la confirmación del servidor
 	end
-
 	if input.UserInputType == Enum.UserInputType.MouseButton2 then
 		isRightMouseDown = true
 	end

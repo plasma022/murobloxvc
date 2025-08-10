@@ -11,19 +11,31 @@ local DAMAGE_COLORS = {
 	Excellent = Color3.fromRGB(0, 255, 0), -- Verde Flúor
 	Ignore = Color3.fromRGB(0, 255, 255), -- Celeste Flúor
 	Double = Color3.fromRGB(255, 255, 255), -- Blanco
+	EnemyAttack = Color3.fromRGB(180, 0, 0), -- Rojo oscuro
 }
 
 local function showDamage(target, amount, type)
-	if not target or not target:FindFirstChild("Head") then return end
+	if not target then return end
+	local part = nil
+	if target:IsA("Model") then
+		part = target:FindFirstChild("Head") or target.PrimaryPart
+	elseif target:IsA("BasePart") then
+		part = target
+	end
+	if not part then return end
 
 	local indicator = damageTemplate:Clone()
 	local label = indicator.DamageText
 
+	local randomOffsetX = math.random(-60, 60) -- Dispersión horizontal
+	local randomOffsetY = math.random(-20, 20) -- Ligera dispersión vertical inicial
+	label.Position = UDim2.new(0.5, randomOffsetX, 0.5, randomOffsetY)
+
 	label.Text = tostring(math.floor(amount))
 	label.TextColor3 = DAMAGE_COLORS[type] or DAMAGE_COLORS.Normal
 
-	indicator.Adornee = target.Head
-	indicator.Parent = target.Head
+	indicator.Adornee = part
+	indicator.Parent = part
 
 	-- Animación
 	local tweenInfo = TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)

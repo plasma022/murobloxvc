@@ -51,8 +51,8 @@ local function damageAndTag(player, enemyModel, damageAmount, damageType)
 		damageApplied = true
 	end
 	if damageApplied then
-		-- Mostrar el número de daño en Head si existe, si no en PrimaryPart
-		local indicatorTarget = enemyModel:FindFirstChild("Head") or enemyModel.PrimaryPart
+		-- Mostrar el número de daño en Head, PrimaryPart, o el propio modelo si no existen
+		local indicatorTarget = enemyModel:FindFirstChild("Head") or enemyModel.PrimaryPart or enemyModel
 		ShowDamageIndicator:FireAllClients(indicatorTarget, damageAmount, damageType or "Normal")
 	end
 end
@@ -201,10 +201,17 @@ local function onUseSkill(player, skillName, targetEnemy)
 		StatFormulas:RecalculateDerivedStats(player)
 		local damage = StatFormulas:CalculateDamage(player) * (skillInfo.DamageMultiplier or 1)
 
-		if (skillType == "SingleTargetMelee" or skillType == "SingleTargetRanged" or skillType == "Projectile") and targetEnemy then
+		if skillType == "SingleTargetMelee" and targetEnemy then
+			-- Daño instantáneo si está en rango
+			local enemyRoot = targetEnemy:FindFirstChild("HumanoidRootPart") or targetEnemy.PrimaryPart
+			local playerRoot = player.Character:FindFirstChild("HumanoidRootPart") or player.Character.PrimaryPart
+			if enemyRoot and playerRoot and (playerRoot.Position - enemyRoot.Position).Magnitude <= (skillInfo.Range or MELEE_RANGE) then
+				damageAndTag(player, targetEnemy, damage, "Normal")
+			end
+		elseif (skillType == "SingleTargetRanged" or skillType == "Projectile" or skillType == "RangedCone") and targetEnemy then
+			-- Daño solo cuando el VFX llegue (task.delay)
 			local vfxInfo = VFXData[skillName]
 			local travelTime = (vfxInfo and vfxInfo.Duration) or 0
-
 			task.delay(travelTime, function()
 				if targetEnemy and targetEnemy.Parent then
 					local isValid = false
@@ -245,66 +252,34 @@ local function onUseSkill(player, skillName, targetEnemy)
 		end
 	end
 
-	if VFXData[skillName] then
-		-- DeathStab: VFX tipo Lunge, sincroniza daño y VFX
-		if skillName == "DeathStab" and targetEnemy then
-			PlayVFXEvent:FireClient(player, skillName, targetEnemy)
-			local vfxInfo = VFXData[skillName]
-			local travelTime = (vfxInfo and vfxInfo.Duration) or 0.4
-			task.delay(travelTime, function()
-				if targetEnemy and targetEnemy.Parent then
-					local isValid = false
-					if targetEnemy:FindFirstChildOfClass("Humanoid") and targetEnemy.Humanoid.Health > 0 then
-						isValid = true
-					elseif targetEnemy.PrimaryPart then
-						isValid = true
+		if VFXData[skillName] then
+			-- DeathStab: VFX tipo Lunge, sincroniza daño y VFX
+			if skillName == "DeathStab" and targetEnemy then
+				PlayVFXEvent:FireClient(player, skillName, targetEnemy)
+				local vfxInfo = VFXData[skillName]
+				local travelTime = (vfxInfo and vfxInfo.Duration) or 0.4
+				task.delay(travelTime, function()
+					if targetEnemy and targetEnemy.Parent then
+						local isValid = false
+						if targetEnemy:FindFirstChildOfClass("Humanoid") and targetEnemy.Humanoid.Health > 0 then
+							isValid = true
+						elseif targetEnemy.PrimaryPart then
+							isValid = true
+						end
+						if isValid then
+							damageAndTag(player, targetEnemy, StatFormulas:CalculateDamage(player) * (skillInfo.DamageMultiplier or 1), "Normal")
+						end
 					end
-					if isValid then
-						damageAndTag(player, targetEnemy, StatFormulas:CalculateDamage(player) * (skillInfo.DamageMultiplier or 1), "Normal")
-					end
-				end
-			end)
-		elseif skillName == "Cyclone" and targetEnemy then
-			PlayVFXEvent:FireClient(player, skillName, targetEnemy)
-			-- Daño inmediato al lanzar la habilidad
-			if targetEnemy and targetEnemy.Parent then
-				local isValid = false
-				if targetEnemy:FindFirstChildOfClass("Humanoid") and targetEnemy.Humanoid.Health > 0 then
-					isValid = true
-				elseif targetEnemy.PrimaryPart then
-					isValid = true
-				end
-				if isValid then
-					damageAndTag(player, targetEnemy, StatFormulas:CalculateDamage(player) * (skillInfo.DamageMultiplier or 1), "Normal")
-				end
+				end)
+			elseif skillName == "Cyclone" and targetEnemy then
+				PlayVFXEvent:FireClient(player, skillName, targetEnemy)
+				-- Solo VFX, el daño ya se aplicó en el bloque principal
+			elseif skillName == "TwistingSlash" then
+				PlayVFXEvent:FireClient(player, skillName, player.Character)
+				-- Solo VFX, el daño ya se aplicó en el bloque principal
+			else
+				PlayVFXEvent:FireClient(player, skillName, targetEnemy or player.Character)
 			end
-		elseif skillName == "TwistingSlash" then
-			-- VFX dura 0.4 segundos y daño solo se aplica una vez al inicio
-			PlayVFXEvent:FireClient(player, skillName, player.Character)
-			local character = player.Character
-			if not character then return end
-			local rootPart = character:FindFirstChild("HumanoidRootPart")
-			if not rootPart then return end
-			local range = skillInfo.Range or 10
-			StatFormulas:RecalculateDerivedStats(player)
-			local areaDamage = StatFormulas:CalculateDamage(player) * (skillInfo.DamageMultiplier or 1)
-			for _, enemy in ipairs(workspace.Zones:GetDescendants()) do
-				if enemy:IsA("Model") then
-					local enemyRoot = enemy:FindFirstChild("HumanoidRootPart") or enemy.PrimaryPart
-					local isValid = false
-					if enemy:FindFirstChildOfClass("Humanoid") and enemy.Humanoid.Health > 0 and enemyRoot then
-						isValid = true
-					elseif enemy.PrimaryPart then
-						isValid = true
-					end
-					if isValid and enemyRoot and (enemyRoot.Position - rootPart.Position).Magnitude <= range then
-						damageAndTag(player, enemy, areaDamage, "Normal")
-					end
-				end
-			end
-		else
-			PlayVFXEvent:FireClient(player, skillName, targetEnemy or player.Character)
-		end
 	end
 end
 

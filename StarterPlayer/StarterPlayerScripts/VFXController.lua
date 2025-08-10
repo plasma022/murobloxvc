@@ -24,7 +24,9 @@ local activeBuffVFX = {}
 -- Función para eliminar un efecto de buff
 local function onRemoveVFX(skillName)
 	if activeBuffVFX[skillName] then
-		activeBuffVFX[skillName]:Destroy()
+		if activeBuffVFX[skillName].Parent then
+			activeBuffVFX[skillName]:Destroy()
+		end
 		activeBuffVFX[skillName] = nil
 	end
 end
@@ -69,7 +71,10 @@ local function onPlayVFX(skillName, target)
 		weld.Part1 = attachPart
 		weld.Parent = vfxClone.PrimaryPart
 		vfxClone.PrimaryPart.Anchored = false
-		if activeBuffVFX[skillName] then activeBuffVFX[skillName]:Destroy() end
+		if activeBuffVFX[skillName] then
+			if activeBuffVFX[skillName].Parent then activeBuffVFX[skillName]:Destroy() end
+			activeBuffVFX[skillName] = nil
+		end
 		activeBuffVFX[skillName] = vfxClone
 		return
 	elseif skillName == "DeathStab" then
@@ -119,9 +124,7 @@ local function onPlayVFX(skillName, target)
 		if not targetPart then vfxClone:Destroy(); return end
 
 	local vfxType = vfxInfo.VFXType or "Static"
-
 	-- Lógica de posicionamiento y animación
-	if skillName == "Inner" then
 		-- El VFX de Inner se weldéa al jugador y nunca se ancla
 		local attachPart = character:FindFirstChild("HumanoidRootPart")
 		if not attachPart then vfxClone:Destroy(); return end

@@ -3,7 +3,7 @@ local SkillData = {
 	-- ==== Dark Knight ====
 	["Cyclone"] = {
 		Name = "Cyclone Sword", ClassName = "DarkKnight", ManaCost = 1, Cooldown = 1.5,
-		SkillType = "SingleTargetMelee", Targeting = "Targeted",
+		SkillType = "SingleTargetMelee", Targeting = "Targeted", Range = 12,
 		DamageMultiplier = 1.2, -- 120% del daño total
 		ImageId = "rbxassetid://77329175261521" -- Pega tu ID de imagen aquí
 	},
@@ -15,7 +15,7 @@ local SkillData = {
 	},
 	["DeathStab"] = {
 		Name = "Death Stab", ClassName = "DarkKnight", ManaCost = 1, Cooldown = 3,
-		SkillType = "SingleTargetMelee", Targeting = "Targeted",
+		SkillType = "SingleTargetMelee", Targeting = "Targeted", Range = 12,
 		DamageMultiplier = 1.8, -- 180% del daño total
 		ImageId = "rbxassetid://100074345540137"
 	},
@@ -29,13 +29,13 @@ local SkillData = {
 	-- ==== Dark Wizard ====
 	["EnergyBall"] = {
 		Name = "Energy Ball", ClassName = "DarkWizard", ManaCost = 3, Cooldown = 1, 
-		SkillType = "Projectile", Targeting = "Targeted",
+		SkillType = "Projectile", Targeting = "Targeted", Range = 40,
 		DamageMultiplier = 1.1,
 		ImageId = "rbxassetid://76727627021005"
 	},
 	["EvilSpirit"] = {
 		Name = "Evil Spirit", ClassName = "DarkWizard", ManaCost = 12, Cooldown = 5, 
-		SkillType = "ConeArea", Range = 30, TargetCount = 5, Targeting = "Self",
+		SkillType = "ConeArea", Range = 40, TargetCount = 5, Targeting = "Self",
 		DamageMultiplier = 0.9,
 		ImageId = "rbxassetid://134787483687563"
 	},

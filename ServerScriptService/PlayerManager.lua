@@ -36,11 +36,23 @@ local function setupCharacter(player, character)
 	elseif className == "FairyElf" then
 		modelName = "FE_StarterCharacter"
 	end
-	-- Solo mostrar advertencia si el modelo no existe, pero NO reasignar player.Character aquí
 	if modelName then
 		local ReplicatedStorage = game:GetService("ReplicatedStorage")
+		local StarterPlayer = game:GetService("StarterPlayer")
 		local starterModel = ReplicatedStorage:FindFirstChild(modelName)
-		if not starterModel then
+		if starterModel then
+			-- Elimina cualquier StarterCharacter anterior
+			local oldStarterChar = StarterPlayer:FindFirstChild("StarterCharacter")
+			if oldStarterChar then oldStarterChar:Destroy() end
+			-- Clona y asigna el modelo como StarterCharacter
+			local starterCharClone = starterModel:Clone()
+			starterCharClone.Name = "StarterCharacter"
+			starterCharClone.Parent = StarterPlayer
+			-- Forzar respawn del jugador con el modelo correcto
+			player:LoadCharacter()
+			-- Elimina el StarterCharacter para no afectar a otros jugadores
+			starterCharClone:Destroy()
+		else
 			warn("No se encontró el modelo de personaje para la clase:", className)
 		end
 	end
